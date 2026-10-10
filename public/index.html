@@ -3,20 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NanoLink | Premium URL Shortener</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>NanoLink | URL Shortener, Tracker & History</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
-            --card-bg: rgba(30, 41, 59, 0.7);
-            --card-border: rgba(255, 255, 255, 0.1);
+            --bg-gradient: linear-gradient(135deg, #090d16 0%, #111827 50%, #0b0f19 100%);
+            --card-bg: rgba(23, 31, 48, 0.75);
+            --card-border: rgba(255, 255, 255, 0.08);
             --primary: #6366f1;
             --primary-hover: #4f46e5;
             --accent: #a855f7;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
+            --text-dim: #64748b;
             --success: #10b981;
+            --warning: #f59e0b;
             --danger: #ef4444;
+            --surface: rgba(15, 23, 42, 0.7);
         }
 
         * {
@@ -31,54 +34,55 @@
             background: var(--bg-gradient);
             color: var(--text-main);
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 20px;
+            padding: 30px 16px 60px;
             position: relative;
             overflow-x: hidden;
         }
 
+        /* Ambient glow circles */
         body::before, body::after {
             content: '';
             position: absolute;
-            width: 400px;
-            height: 400px;
+            width: 500px;
+            height: 500px;
             border-radius: 50%;
-            filter: blur(120px);
+            filter: blur(140px);
             z-index: 0;
-            opacity: 0.35;
+            opacity: 0.28;
             pointer-events: none;
         }
 
         body::before {
             background: var(--primary);
-            top: 10%;
-            left: 15%;
+            top: 5%;
+            left: 10%;
         }
 
         body::after {
             background: var(--accent);
-            bottom: 10%;
-            right: 15%;
+            bottom: 5%;
+            right: 10%;
         }
 
         .container {
             width: 100%;
-            max-width: 580px;
+            max-width: 800px;
             background: var(--card-bg);
             border: 1px solid var(--card-border);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 44px 36px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-radius: 28px;
+            padding: 40px 36px;
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.7);
             position: relative;
             z-index: 1;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 32px;
+            margin-bottom: 28px;
         }
 
         .badge {
@@ -87,17 +91,17 @@
             gap: 6px;
             padding: 6px 14px;
             background: rgba(99, 102, 241, 0.15);
-            border: 1px solid rgba(99, 102, 241, 0.3);
+            border: 1px solid rgba(99, 102, 241, 0.35);
             border-radius: 9999px;
             font-size: 0.82rem;
-            color: #818cf8;
+            color: #a5b4fc;
             font-weight: 600;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
         .header h1 {
-            font-size: 2.2rem;
-            font-weight: 700;
+            font-size: 2.3rem;
+            font-weight: 800;
             letter-spacing: -0.03em;
             background: linear-gradient(to right, #ffffff, #cbd5e1);
             -webkit-background-clip: text;
@@ -110,10 +114,64 @@
             font-size: 0.95rem;
         }
 
-        form {
+        /* Tabs Navigation */
+        .tabs {
+            display: flex;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 5px;
+            border-radius: 14px;
+            border: 1px solid var(--card-border);
+            margin-bottom: 24px;
+            gap: 6px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 11px 16px;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .tab-btn:hover {
+            color: #fff;
+        }
+
+        .tab-btn.active {
+            background: rgba(99, 102, 241, 0.22);
+            color: #fff;
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.25s ease-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Form Controls */
+        .form-row {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 14px;
         }
 
         .input-group {
@@ -125,36 +183,58 @@
         .input-icon {
             position: absolute;
             left: 18px;
-            color: var(--text-muted);
+            color: var(--text-dim);
             display: flex;
             align-items: center;
             pointer-events: none;
         }
 
-        input[type="url"] {
+        input[type="text"], input[type="url"] {
             width: 100%;
-            padding: 16px 18px 16px 48px;
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 15px 18px 15px 48px;
+            background: var(--surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 14px;
             color: #fff;
-            font-size: 1rem;
+            font-size: 0.95rem;
             outline: none;
-            transition: all 0.25s ease;
+            transition: all 0.2s ease;
         }
 
-        input[type="url"]:focus {
+        input[type="text"]:focus, input[type="url"]:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.25);
-            background: rgba(15, 23, 42, 0.85);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+            background: rgba(15, 23, 42, 0.9);
         }
 
-        input[type="url"]::placeholder {
-            color: #64748b;
+        input::placeholder {
+            color: var(--text-dim);
         }
 
-        button.submit-btn {
-            padding: 16px;
+        .alias-input-wrapper {
+            display: flex;
+            gap: 10px;
+        }
+
+        .alias-prefix {
+            padding: 15px 16px;
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            color: var(--text-dim);
+            font-size: 0.88rem;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+
+        .alias-input-wrapper input {
+            padding-left: 16px;
+        }
+
+        button.primary-btn {
+            width: 100%;
+            padding: 15px;
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
             border: none;
             border-radius: 14px;
@@ -166,38 +246,58 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            transition: all 0.25s ease;
+            transition: all 0.2s ease;
             box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
         }
 
-        button.submit-btn:hover {
+        button.primary-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 14px 28px -5px rgba(99, 102, 241, 0.5);
+            box-shadow: 0 14px 26px -5px rgba(99, 102, 241, 0.5);
         }
 
-        button.submit-btn:active {
+        button.primary-btn:active {
             transform: translateY(0);
         }
 
-        button.submit-btn:disabled {
+        button.primary-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
         }
 
-        .result-box {
-            margin-top: 24px;
-            padding: 18px;
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            border-radius: 16px;
+        /* Alert / Messages */
+        .msg-box {
+            margin-top: 14px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.9rem;
             display: none;
-            animation: fadeIn 0.3s ease-out forwards;
+            align-items: center;
+            gap: 10px;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
+        .msg-box.error {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        /* Result Panel */
+        .result-panel {
+            margin-top: 24px;
+            padding: 20px;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(99, 102, 241, 0.35);
+            border-radius: 18px;
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
         }
 
         .result-label {
@@ -205,7 +305,7 @@
             text-transform: uppercase;
             letter-spacing: 0.05em;
             color: var(--text-muted);
-            margin-bottom: 8px;
+            font-weight: 600;
         }
 
         .result-content {
@@ -213,6 +313,10 @@
             align-items: center;
             justify-content: space-between;
             gap: 12px;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .short-url-link {
@@ -229,157 +333,704 @@
             text-decoration: underline;
         }
 
-        .copy-btn {
-            padding: 10px 16px;
+        .action-btns {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .icon-btn {
+            padding: 9px 14px;
             background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 10px;
             color: #fff;
-            font-size: 0.85rem;
+            font-size: 0.84rem;
             font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 6px;
             transition: all 0.2s ease;
-            flex-shrink: 0;
         }
 
-        .copy-btn:hover {
-            background: rgba(255, 255, 255, 0.15);
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.16);
         }
 
-        .copy-btn.copied {
+        .icon-btn.danger:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.4);
+            color: #fca5a5;
+        }
+
+        .icon-btn.copied {
             background: var(--success);
             border-color: var(--success);
         }
 
-        .error-msg {
-            margin-top: 14px;
-            color: var(--danger);
-            font-size: 0.9rem;
-            text-align: center;
+        /* Analytics View Card */
+        .analytics-card {
+            margin-top: 24px;
             display: none;
+            animation: fadeIn 0.3s ease-out;
         }
 
-        .footer {
-            margin-top: 32px;
-            text-align: center;
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 680px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                padding: 30px 18px;
+            }
+            .alias-input-wrapper {
+                flex-direction: column;
+            }
+        }
+
+        .metric-tile {
+            background: var(--surface);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .metric-title {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-dim);
+            font-weight: 600;
+        }
+
+        .metric-value {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .metric-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Table & Lists */
+        .table-section {
+            background: var(--surface);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 18px;
+            overflow-x: auto;
+        }
+
+        .table-section h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.84rem;
+            text-align: left;
+        }
+
+        th {
+            padding: 10px 12px;
+            color: var(--text-dim);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: #e2e8f0;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge-ref {
+            display: inline-block;
+            padding: 3px 8px;
+            background: rgba(99, 102, 241, 0.18);
+            color: #a5b4fc;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-clicks {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+            border-radius: 8px;
             font-size: 0.82rem;
-            color: #64748b;
+            font-weight: 700;
+        }
+
+        .empty-history {
+            text-align: center;
+            padding: 32px 16px;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        /* History items list */
+        .history-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .history-card:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            background: rgba(15, 23, 42, 0.85);
+        }
+
+        .history-details {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .history-short {
+            font-weight: 700;
+            font-size: 0.98rem;
+            color: #a5b4fc;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .history-short:hover {
+            text-decoration: underline;
+        }
+
+        .history-long {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-meta {
+            font-size: 0.76rem;
+            color: var(--text-dim);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .history-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
+        <!-- Header -->
         <div class="header">
-            <span class="badge">✨ Free & Lightning Fast</span>
-            <h1>NanoLink</h1>
-            <p>Paste any long URL to create a smart, shortened link in seconds.</p>
+            <span class="badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
+                NanoLink Engine v2.0
+            </span>
+            <h1>Shorten, Track & Manage</h1>
+            <p>Smart link shortener with real-time visitor analytics & history.</p>
         </div>
 
-        <form id="shortenForm">
-            <div class="input-group">
-                <span class="input-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                    </svg>
-                </span>
-                <input type="url" id="longUrlInput" placeholder="https://example.com/very-long-url-path" required>
-            </div>
-            
-            <button type="submit" class="submit-btn" id="submitBtn">
-                <span>Shorten URL</span>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                    <polyline points="12 5 19 12 12 19"></polyline>
+        <!-- Mode Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" id="tabShortenBtn" onclick="switchTab('shorten')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
                 </svg>
+                Shorten
             </button>
-        </form>
+            <button class="tab-btn" id="tabAnalyticsBtn" onclick="switchTab('analytics')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                Tracker
+            </button>
+            <button class="tab-btn" id="tabHistoryBtn" onclick="switchTab('history')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                History
+            </button>
+        </div>
 
-        <div class="error-msg" id="errorMsg"></div>
+        <!-- TAB 1: SHORTEN URL -->
+        <div class="tab-content active" id="tabShorten">
+            <form id="shortenForm" class="form-row">
+                <div class="input-group">
+                    <span class="input-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="2" y1="12" x2="22" y2="12"></line>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                        </svg>
+                    </span>
+                    <input type="text" id="longUrlInput" placeholder="Enter long URL (e.g. https://google.com)" required>
+                </div>
 
-        <div class="result-box" id="resultBox">
-            <div class="result-label">Your shortened link:</div>
-            <div class="result-content">
-                <a href="#" target="_blank" class="short-url-link" id="shortUrlLink"></a>
-                <button class="copy-btn" id="copyBtn">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                <div class="alias-input-wrapper">
+                    <span class="alias-prefix">Custom Alias (Optional):</span>
+                    <div class="input-group" style="flex: 1;">
+                        <span class="input-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                                <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                            </svg>
+                        </span>
+                        <input type="text" id="customAliasInput" placeholder="my-custom-slug" pattern="[a-zA-Z0-9_-]+" title="Only alphanumeric letters, hyphens, and underscores allowed">
+                    </div>
+                </div>
+
+                <button type="submit" class="primary-btn" id="shortenSubmitBtn">
+                    <span>Generate Short Link</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
                     </svg>
-                    <span id="copyBtnText">Copy</span>
+                </button>
+            </form>
+
+            <div class="msg-box error" id="shortenErrorMsg"></div>
+
+            <div class="result-panel" id="resultPanel">
+                <div class="result-header">
+                    <div class="result-label">✨ Your Shortened Link:</div>
+                </div>
+                <div class="result-content">
+                    <a href="#" target="_blank" class="short-url-link" id="shortUrlDisplay"></a>
+                    <div class="action-btns">
+                        <button class="icon-btn" id="copyResultBtn">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            <span id="copyBtnText">Copy</span>
+                        </button>
+                        <button class="icon-btn" id="viewTrackBtn" title="Inspect Analytics">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="20" x2="18" y2="10"></line>
+                                <line x1="12" y1="20" x2="12" y2="4"></line>
+                                <line x1="6" y1="20" x2="6" y2="14"></line>
+                            </svg>
+                            <span>Stats</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: TRACK & ANALYTICS -->
+        <div class="tab-content" id="tabAnalytics">
+            <form id="trackForm" class="form-row">
+                <div class="input-group">
+                    <span class="input-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </span>
+                    <input type="text" id="trackCodeInput" placeholder="Enter short code or full link (e.g. 5xYz9a)" required>
+                </div>
+                <button type="submit" class="primary-btn" id="trackSubmitBtn">
+                    <span>Inspect Analytics</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 14 14"></polyline>
+                    </svg>
+                </button>
+            </form>
+
+            <div class="msg-box error" id="trackErrorMsg"></div>
+
+            <!-- Analytics Dashboard Output -->
+            <div class="analytics-card" id="analyticsCard">
+                <div class="metrics-grid">
+                    <div class="metric-tile">
+                        <div class="metric-title">Total Visits</div>
+                        <div class="metric-value" id="statsClicks">0</div>
+                        <div class="metric-sub">Total click events</div>
+                    </div>
+                    <div class="metric-tile">
+                        <div class="metric-title">Short Code</div>
+                        <div class="metric-value" id="statsCode" style="font-size: 1.3rem;">-</div>
+                        <div class="metric-sub" id="statsCreated">-</div>
+                    </div>
+                    <div class="metric-tile">
+                        <div class="metric-title">Original Destination</div>
+                        <div class="metric-value" style="font-size: 1rem; word-break: break-all;" id="statsOriginal">-</div>
+                        <div class="metric-sub">Target URL</div>
+                    </div>
+                </div>
+
+                <div class="table-section">
+                    <h3>
+                        <span>Recent Visitors Activity</span>
+                        <span id="clickCounterBadge" class="badge-ref">0 Logged</span>
+                    </h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Referrer</th>
+                                <th>IP</th>
+                                <th>User Agent</th>
+                            </tr>
+                        </thead>
+                        <tbody id="visitorsTableBody">
+                            <!-- Injected rows -->
+                        </tbody>
+                    </table>
+                    <div class="empty-history" id="emptyClicksNotice">No clicks recorded yet. Share your short link to start tracking!</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: LINKS HISTORY -->
+        <div class="tab-content" id="tabHistory">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <span style="font-size: 0.95rem; font-weight: 700; color: #cbd5e1;">Your Generated Links</span>
+                <button class="icon-btn" onclick="fetchHistory()" style="padding: 6px 12px; font-size: 0.8rem;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                    </svg>
+                    Refresh
                 </button>
             </div>
+
+            <div id="historyListContainer">
+                <!-- Dynamically populated links -->
+            </div>
+            <div class="empty-history" id="emptyHistoryNotice" style="display: none;">
+                No shortened links created yet. Create your first link in the Shorten tab!
+            </div>
         </div>
 
-        <div class="footer">
-           
-        </div>
     </div>
 
     <script>
-        const form = document.getElementById('shortenForm');
-        const longUrlInput = document.getElementById('longUrlInput');
-        const submitBtn = document.getElementById('submitBtn');
-        const resultBox = document.getElementById('resultBox');
-        const shortUrlLink = document.getElementById('shortUrlLink');
-        const copyBtn = document.getElementById('copyBtn');
-        const copyBtnText = document.getElementById('copyBtnText');
-        const errorMsg = document.getElementById('errorMsg');
+        // Tab switching
+        function switchTab(tab) {
+            document.getElementById('tabShortenBtn').classList.toggle('active', tab === 'shorten');
+            document.getElementById('tabAnalyticsBtn').classList.toggle('active', tab === 'analytics');
+            document.getElementById('tabHistoryBtn').classList.toggle('active', tab === 'history');
 
-        form.addEventListener('submit', async (e) => {
+            document.getElementById('tabShorten').classList.toggle('active', tab === 'shorten');
+            document.getElementById('tabAnalytics').classList.toggle('active', tab === 'analytics');
+            document.getElementById('tabHistory').classList.toggle('active', tab === 'history');
+
+            if (tab === 'history') {
+                fetchHistory();
+            }
+        }
+
+        // Shorten Form Logic
+        const shortenForm = document.getElementById('shortenForm');
+        const longUrlInput = document.getElementById('longUrlInput');
+        const customAliasInput = document.getElementById('customAliasInput');
+        const shortenSubmitBtn = document.getElementById('shortenSubmitBtn');
+        const shortenErrorMsg = document.getElementById('shortenErrorMsg');
+        const resultPanel = document.getElementById('resultPanel');
+        const shortUrlDisplay = document.getElementById('shortUrlDisplay');
+        const copyResultBtn = document.getElementById('copyResultBtn');
+        const copyBtnText = document.getElementById('copyBtnText');
+        const viewTrackBtn = document.getElementById('viewTrackBtn');
+
+        let lastGeneratedCode = '';
+
+        shortenForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
             const longUrl = longUrlInput.value.trim();
+            const customAlias = customAliasInput.value.trim();
+
             if (!longUrl) return;
 
-            submitBtn.disabled = true;
-            submitBtn.querySelector('span').textContent = 'Shortening...';
-            errorMsg.style.display = 'none';
-            resultBox.style.display = 'none';
+            shortenSubmitBtn.disabled = true;
+            shortenSubmitBtn.querySelector('span').textContent = 'Shortening...';
+            shortenErrorMsg.style.display = 'none';
+            resultPanel.style.display = 'none';
 
             try {
                 const response = await fetch('/shorten', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ longUrl })
+                    body: JSON.stringify({ longUrl, customAlias })
                 });
 
+                const data = await response.json();
+
                 if (!response.ok) {
-                    throw new Error('Failed to shorten URL');
+                    throw new Error(data.error || 'Failed to shorten link');
                 }
 
-                const data = await response.json();
-                
-                shortUrlLink.href = data.shortUrl;
-                shortUrlLink.textContent = data.shortUrl;
-                resultBox.style.display = 'block';
+                lastGeneratedCode = data.urlCode;
+                shortUrlDisplay.href = data.shortUrl;
+                shortUrlDisplay.textContent = data.shortUrl;
+                resultPanel.style.display = 'block';
 
             } catch (err) {
-                errorMsg.textContent = 'Oops! Could not shorten link. Please try again.';
-                errorMsg.style.display = 'block';
+                shortenErrorMsg.textContent = err.message || 'Something went wrong';
+                shortenErrorMsg.style.display = 'flex';
             } finally {
-                submitBtn.disabled = false;
-                submitBtn.querySelector('span').textContent = 'Shorten URL';
+                shortenSubmitBtn.disabled = false;
+                shortenSubmitBtn.querySelector('span').textContent = 'Generate Short Link';
             }
         });
 
-        copyBtn.addEventListener('click', async () => {
+        // Copy button
+        copyResultBtn.addEventListener('click', async () => {
             try {
-                await navigator.clipboard.writeText(shortUrlLink.href);
-                copyBtn.classList.add('copied');
+                await navigator.clipboard.writeText(shortUrlDisplay.href);
+                copyResultBtn.classList.add('copied');
                 copyBtnText.textContent = 'Copied!';
                 setTimeout(() => {
-                    copyBtn.classList.remove('copied');
+                    copyResultBtn.classList.remove('copied');
                     copyBtnText.textContent = 'Copy';
                 }, 2000);
             } catch (err) {
-                console.error('Failed to copy', err);
+                console.error(err);
             }
         });
+
+        // Quick jump to analytics
+        viewTrackBtn.addEventListener('click', () => {
+            if (lastGeneratedCode) {
+                document.getElementById('trackCodeInput').value = lastGeneratedCode;
+                switchTab('analytics');
+                loadAnalytics(lastGeneratedCode);
+            }
+        });
+
+        // Track & Analytics Form Logic
+        const trackForm = document.getElementById('trackForm');
+        const trackCodeInput = document.getElementById('trackCodeInput');
+        const trackSubmitBtn = document.getElementById('trackSubmitBtn');
+        const trackErrorMsg = document.getElementById('trackErrorMsg');
+        const analyticsCard = document.getElementById('analyticsCard');
+
+        trackForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            let inputVal = trackCodeInput.value.trim();
+            if (!inputVal) return;
+
+            // Support both full URL and raw code
+            if (inputVal.includes('/')) {
+                inputVal = inputVal.split('/').filter(Boolean).pop();
+            }
+
+            loadAnalytics(inputVal);
+        });
+
+        async function loadAnalytics(code) {
+            trackSubmitBtn.disabled = true;
+            trackSubmitBtn.querySelector('span').textContent = 'Fetching...';
+            trackErrorMsg.style.display = 'none';
+            analyticsCard.style.display = 'none';
+
+            try {
+                const response = await fetch(`/api/analytics/${encodeURIComponent(code)}`);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'No record found for this link code');
+                }
+
+                document.getElementById('statsClicks').textContent = data.clicks ?? 0;
+                document.getElementById('statsCode').textContent = data.urlCode;
+                document.getElementById('statsCreated').textContent = `Created: ${new Date(data.createdAt).toLocaleDateString()}`;
+                
+                const origLink = document.getElementById('statsOriginal');
+                origLink.textContent = data.longUrl;
+                origLink.title = data.longUrl;
+
+                const tableBody = document.getElementById('visitorsTableBody');
+                const emptyNotice = document.getElementById('emptyClicksNotice');
+                const counterBadge = document.getElementById('clickCounterBadge');
+
+                tableBody.innerHTML = '';
+                const logs = data.analytics || [];
+                counterBadge.textContent = `${logs.length} Logged`;
+
+                if (logs.length === 0) {
+                    emptyNotice.style.display = 'block';
+                } else {
+                    emptyNotice.style.display = 'none';
+                    // Show reverse chronological order
+                    [...logs].reverse().forEach(log => {
+                        const tr = document.createElement('tr');
+                        const time = new Date(log.timestamp).toLocaleString();
+                        const ref = log.referrer || 'Direct';
+                        const ip = log.ip || 'Unknown';
+                        const ua = (log.userAgent || 'Unknown').substring(0, 50) + (log.userAgent && log.userAgent.length > 50 ? '...' : '');
+
+                        tr.innerHTML = `
+                            <td>${time}</td>
+                            <td><span class="badge-ref">${ref}</span></td>
+                            <td>${ip}</td>
+                            <td title="${log.userAgent || ''}">${ua}</td>
+                        `;
+                        tableBody.appendChild(tr);
+                    });
+                }
+
+                analyticsCard.style.display = 'block';
+
+            } catch (err) {
+                trackErrorMsg.textContent = err.message || 'Could not load stats';
+                trackErrorMsg.style.display = 'flex';
+            } finally {
+                trackSubmitBtn.disabled = false;
+                trackSubmitBtn.querySelector('span').textContent = 'Inspect Analytics';
+            }
+        }
+
+        // History Tab Logic
+        async function fetchHistory() {
+            const container = document.getElementById('historyListContainer');
+            const emptyNotice = document.getElementById('emptyHistoryNotice');
+
+            container.innerHTML = '<div style="text-align: center; color: #94a3b8; padding: 20px;">Loading links...</div>';
+            emptyNotice.style.display = 'none';
+
+            try {
+                const res = await fetch('/api/urls');
+                const urls = await res.json();
+
+                if (!res.ok) throw new Error('Could not load history');
+
+                container.innerHTML = '';
+                if (!urls || urls.length === 0) {
+                    emptyNotice.style.display = 'block';
+                    return;
+                }
+
+                urls.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'history-card';
+                    const clicks = item.clicks || 0;
+                    const dateStr = new Date(item.date).toLocaleDateString();
+
+                    card.innerHTML = `
+                        <div class="history-details">
+                            <a href="${item.shortUrl}" target="_blank" class="history-short">
+                                ${item.shortUrl}
+                                <span class="badge-clicks">${clicks} click${clicks === 1 ? '' : 's'}</span>
+                            </a>
+                            <div class="history-long" title="${item.longUrl}">🔗 ${item.longUrl}</div>
+                            <div class="history-meta">
+                                <span>📅 ${dateStr}</span>
+                                <span>Code: <code>${item.urlCode}</code></span>
+                            </div>
+                        </div>
+                        <div class="history-actions">
+                            <button class="icon-btn" onclick="copyLink('${item.shortUrl}', this)" title="Copy">
+                                <span>Copy</span>
+                            </button>
+                            <button class="icon-btn" onclick="inspectHistoryStats('${item.urlCode}')" title="Stats">
+                                <span>Stats</span>
+                            </button>
+                            <button class="icon-btn danger" onclick="deleteHistoryLink('${item.urlCode}')" title="Delete">
+                                <span>Delete</span>
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (err) {
+                container.innerHTML = `<div style="color: #ef4444; padding: 16px; text-align: center;">Error loading history: ${err.message}</div>`;
+            }
+        }
+
+        async function copyLink(url, btn) {
+            try {
+                await navigator.clipboard.writeText(url);
+                const originalText = btn.innerHTML;
+                btn.classList.add('copied');
+                btn.innerHTML = '<span>Copied!</span>';
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.innerHTML = originalText;
+                }, 1800);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function inspectHistoryStats(code) {
+            document.getElementById('trackCodeInput').value = code;
+            switchTab('analytics');
+            loadAnalytics(code);
+        }
+
+        async function deleteHistoryLink(code) {
+            if (!confirm(`Are you sure you want to delete short link "${code}"?`)) return;
+
+            try {
+                const res = await fetch(`/api/urls/${encodeURIComponent(code)}`, {
+                    method: 'DELETE'
+                });
+                if (res.ok) {
+                    fetchHistory();
+                } else {
+                    const data = await res.json();
+                    alert(data.error || 'Failed to delete');
+                }
+            } catch (err) {
+                alert('Error deleting link');
+            }
+        }
     </script>
 </body>
 </html>
